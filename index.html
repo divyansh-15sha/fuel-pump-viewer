@@ -982,9 +982,9 @@
 
     function initMap() {
       appState.map = L.map('map', { closePopupOnClick: true }).setView([39.5, -98.35], 4);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  maxZoom: 20,
-  attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(appState.map);
 
       appState.map.on('click', () => {
