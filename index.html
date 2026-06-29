@@ -982,7 +982,7 @@
 
     function initMap() {
       appState.map = L.map('map', { closePopupOnClick: true }).setView([39.5, -98.35], 4);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(appState.map);
@@ -991,6 +991,7 @@
         appState.map.closePopup();
         appState.markers.forEach((marker) => marker.closeTooltip());
       });
+      appState.map.on('zoomend', updateMarkerSizes);
     }
 
     function clearMarkers() {
@@ -999,6 +1000,20 @@
       appState.selectedMarker = null;
     }
 
+    function getMarkerRadius() {
+  const zoom = appState.map ? appState.map.getZoom() : 4;
+
+  if (zoom <= 4) return 3;   // Full USA view
+  if (zoom <= 5) return 4;
+  if (zoom <= 7) return 5;
+  return 6;                  // Close zoom
+}
+
+function updateMarkerSizes() {
+  const radius = getMarkerRadius();
+  appState.markers.forEach((marker) => marker.setRadius(radius));
+}
+    
     function renderMap(fitBounds = true) {
       clearMarkers();
 
@@ -1010,7 +1025,7 @@
       const bounds = [];
       appState.rows.forEach((stop) => {
         const marker = L.circleMarker([stop.latitude, stop.longitude], {
-          radius: 7,
+          radius: getMarkerRadius(),
           color: getThemeValue('--marker-outline', '#ef4444'),
           fillColor: getThemeValue('--marker-fill', '#60a5fa'),
           fillOpacity: 0.86,
