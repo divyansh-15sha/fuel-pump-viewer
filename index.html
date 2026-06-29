@@ -198,6 +198,18 @@
       margin-bottom: 8px;
     }
 
+    .interstate-label {
+  background: rgba(255, 255, 255, 0.92);
+  color: #1e3a8a;
+  border: 1px solid rgba(30, 58, 138, 0.35);
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  white-space: nowrap;
+}
+    
     .title-actions {
       display: flex;
       align-items: center;
@@ -980,7 +992,47 @@
       );
     }
 
+    const INTERSTATE_LABELS = [
+  { name: 'I-5', lat: 38.5, lng: -121.4 },
+  { name: 'I-10', lat: 32.8, lng: -96.8 },
+  { name: 'I-15', lat: 36.2, lng: -115.2 },
+  { name: 'I-20', lat: 32.6, lng: -97.1 },
+  { name: 'I-35', lat: 35.5, lng: -97.5 },
+  { name: 'I-40', lat: 35.2, lng: -101.8 },
+  { name: 'I-44', lat: 37.1, lng: -94.5 },
+  { name: 'I-55', lat: 35.1, lng: -90.0 },
+  { name: 'I-65', lat: 36.2, lng: -86.8 },
+  { name: 'I-70', lat: 39.1, lng: -94.6 },
+  { name: 'I-75', lat: 34.8, lng: -84.9 },
+  { name: 'I-80', lat: 41.6, lng: -93.6 },
+  { name: 'I-81', lat: 38.0, lng: -79.0 },
+  { name: 'I-90', lat: 43.6, lng: -89.8 },
+  { name: 'I-95', lat: 36.8, lng: -77.4 }
+];
+
+const interstateLayer = L.layerGroup();
+
+function renderInterstateLabels() {
+  interstateLayer.clearLayers();
+
+  INTERSTATE_LABELS.forEach((road) => {
+    const label = L.marker([road.lat, road.lng], {
+      interactive: false,
+      icon: L.divIcon({
+        className: '',
+        html: `<div class="interstate-label">${road.name}</div>`,
+        iconSize: [42, 20],
+        iconAnchor: [21, 10]
+      })
+    });
+
+    interstateLayer.addLayer(label);
+  });
+
+  interstateLayer.addTo(appState.map);
+}
     function initMap() {
+      renderInterstateLabels();
       appState.map = L.map('map', { closePopupOnClick: true }).setView([39.5, -98.35], 4);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
