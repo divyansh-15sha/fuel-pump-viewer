@@ -1032,19 +1032,22 @@ function renderInterstateLabels() {
   interstateLayer.addTo(appState.map);
 }
     function initMap() {
-      renderInterstateLabels();
-      appState.map = L.map('map', { closePopupOnClick: true }).setView([39.5, -98.35], 4);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(appState.map);
+  appState.map = L.map('map', { closePopupOnClick: true }).setView([39.5, -98.35], 4);
 
-      appState.map.on('click', () => {
-        appState.map.closePopup();
-        appState.markers.forEach((marker) => marker.closeTooltip());
-      });
-      appState.map.on('zoomend', updateMarkerSizes);
-    }
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(appState.map);
+
+  renderInterstateLabels();
+
+  appState.map.on('click', () => {
+    appState.map.closePopup();
+    appState.markers.forEach((marker) => marker.closeTooltip());
+  });
+
+  appState.map.on('zoomend', updateMarkerSizes);
+}
 
     function clearMarkers() {
       appState.markers.forEach((m) => appState.map.removeLayer(m));
