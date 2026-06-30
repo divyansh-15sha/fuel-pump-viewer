@@ -394,6 +394,49 @@
       padding-right: 2px;
     }
 
+    .price-sort-th {
+  padding: 0;
+}
+
+.price-sort-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.price-sort-btn:hover {
+  background: var(--row-hover);
+  color: var(--text);
+}
+
+.price-sort-arrows {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 0.78;
+  font-size: 9px;
+}
+
+.price-sort-arrows span {
+  opacity: 0.38;
+}
+
+.price-sort-btn[data-sort="asc"] .sort-up,
+.price-sort-btn[data-sort="desc"] .sort-down {
+  opacity: 1;
+  color: var(--accent);
+}
+
     .highway-option {
       display: flex;
       align-items: center;
@@ -1278,7 +1321,15 @@
               <tr>
                 <th>Pump</th>
                 <th>City, State</th>
-                <th>Price</th>
+                <th class="price-sort-th">
+  <button id="priceSortBtn" class="price-sort-btn" type="button" data-sort="none" title="Price: master order">
+    <span>Price</span>
+    <span class="price-sort-arrows">
+      <span class="sort-up">▲</span>
+      <span class="sort-down">▼</span>
+    </span>
+  </button>
+</th>
               </tr>
             </thead>
             <tbody id="pumpTableBody"></tbody>
@@ -1484,6 +1535,7 @@
       selectedMarker: null,
       selectedKey: '',
       activeHighway: '',
+      priceSort: 'none',
       meta: {
         mode: 'default',
         sourceLabel: 'Not loaded',
@@ -1857,6 +1909,43 @@
       if (fitBounds && bounds.length) appState.map.fitBounds(bounds, { padding: [30, 30] });
     }
 
+    function updatePriceSortButton() {
+  const btn = $('priceSortBtn');
+  if (!btn) return;
+
+  btn.dataset.sort = appState.priceSort || 'none';
+
+  if (appState.priceSort === 'desc') {
+    btn.title = 'Price: high to low';
+  } else if (appState.priceSort === 'asc') {
+    btn.title = 'Price: low to high';
+  } else {
+    btn.title = 'Price: master order';
+  }
+}
+
+function applyPriceSortToFilteredRows() {
+  if (appState.priceSort === 'desc') {
+    appState.filteredRows.sort((a, b) => b.price_per_gallon - a.price_per_gallon);
+  } else if (appState.priceSort === 'asc') {
+    appState.filteredRows.sort((a, b) => a.price_per_gallon - b.price_per_gallon);
+  }
+
+  updatePriceSortButton();
+}
+
+function cyclePriceSort() {
+  if (appState.priceSort === 'none') {
+    appState.priceSort = 'desc';
+  } else if (appState.priceSort === 'desc') {
+    appState.priceSort = 'asc';
+  } else {
+    appState.priceSort = 'none';
+  }
+
+  applySearch();
+}
+
     function renderTable() {
       const tbody = $('pumpTableBody');
       tbody.innerHTML = '';
@@ -1928,7 +2017,8 @@
 
       $('filteredCount').textContent = String(appState.filteredRows.length);
       appState.selectedKey = '';
-      renderTable();
+applyPriceSortToFilteredRows();
+renderTable();
 
       if (highways.length || previousHighways.length) {
         renderMap(true);
@@ -1953,8 +2043,10 @@
       $('stateFilter').value = '';
       setSelectedHighways([]);
       appState.filteredRows = [...appState.rows];
-      appState.selectedKey = '';
-      appState.activeHighways = [];
+appState.selectedKey = '';
+appState.activeHighways = [];
+appState.priceSort = 'none';
+updatePriceSortButton();
       updateMetaUi();
       renderTable();
       renderMap(true);
@@ -2070,8 +2162,10 @@
       $('stateFilter').value = '';
       setSelectedHighways([]);
       appState.activeHighways = [];
-      updateMetaUi();
-      renderTable();
+appState.priceSort = 'none';
+updatePriceSortButton();
+updateMetaUi();
+renderTable();
       renderMap(true);
 
       const reasonLines = Object.entries(meta.invalidReasons || {})
@@ -2432,6 +2526,7 @@
       $('highwayOptions').addEventListener('click', (event) => event.stopPropagation());
       document.addEventListener('click', closeHighwayDropdown);
       $('clearFiltersBtn').addEventListener('click', () => clearFilters(true));
+      $('priceSortBtn').addEventListener('click', cyclePriceSort);
     }
 
     applyTheme(localStorage.getItem(THEME_KEY) || 'dark', false);
