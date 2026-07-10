@@ -1524,7 +1524,8 @@
       city: ['city', 'town', 'municipality', 'column e', 'e'],
       state: ['state', 'st', 'province', 'state code', 'state_code', 'column f', 'f'],
       location: ['location', 'city state', 'city, state', 'address', 'full address', 'full_address', 'column g', 'g'],
-      highway: ['highway', 'highway name', 'highway_name', 'interstate', 'interstate highway', 'interstate_highway', 'corridor', 'route', 'route name', 'road', 'column h', 'h']
+      highway: ['highway', 'highway name', 'highway_name', 'interstate', 'interstate highway', 'interstate_highway', 'corridor', 'route', 'route name', 'road', 'column g', 'g'],
+exit: ['exit', 'exit no', 'exit number', 'exit_name', 'exit name', 'column h', 'h']
     };
 
     const appState = {
@@ -1695,7 +1696,8 @@
       let state = String(getValue(row, 'state') || '').trim();
       const locationRaw = String(getValue(row, 'location') || '').trim();
       const highwayRaw = String(getValue(row, 'highway') || '').trim();
-      const highways = highwayTokens(highwayRaw);
+const exitRaw = String(getValue(row, 'exit') || '').trim();
+const highways = highwayTokens(highwayRaw);
 
       if ((!city || !state) && locationRaw.includes(',')) {
         const parts = locationRaw.split(',').map((s) => s.trim()).filter(Boolean);
@@ -1720,7 +1722,8 @@
         city,
         state,
         highway: highways.join(', '),
-        location: cityState || usefulLocation
+exit: exitRaw,
+location: cityState || usefulLocation
       };
     }
 
@@ -1792,7 +1795,8 @@
         `<div class="tt-title">${escapeHtml(stop.pump_name)}</div>` +
         `<div class="tt-line"><b>Location:</b> ${escapeHtml(displayLocation(stop))}</div>` +
         `<div class="tt-line"><b>Price:</b> $${stop.price_per_gallon.toFixed(4)}</div>` +
-        `<div class="tt-line"><b>Coordinates:</b> ${stop.latitude.toFixed(5)}, ${stop.longitude.toFixed(5)}</div>`
+`<div class="tt-line"><b>Highway:</b> ${escapeHtml(stop.highway || 'n/a')} ||| <b>Exit:</b> ${escapeHtml(stop.exit || 'n/a')}</div>` +
+`<div class="tt-line"><b>Coordinates:</b> ${stop.latitude.toFixed(5)}, ${stop.longitude.toFixed(5)}</div>``
       );
     }
 
