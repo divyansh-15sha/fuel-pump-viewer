@@ -1517,16 +1517,16 @@
       'Loves - IN222,2.9886,39.870945,-84.933264,Richmond,IN,I-70\n';
 
     const FIELD_ALIASES = {
-      pump: ['pump_name', 'pump name', 'pump', 'name', 'station', 'station name', 'fuel stop', 'fuel_stop', 'truck stop', 'truck_stop', 'location name', 'location_name', 'vendor', 'brand', 'site name', 'store', 'column a', 'a'],
-      price: ['price_per_gallon', 'price per gallon', 'price/gallon', 'price per gal', 'price_per_gal', 'price', 'fuel price', 'diesel price', 'discounted price', 'retail price', 'cpg', 'cost per gallon', 'cost_per_gallon', 'rate', 'column b', 'b'],
-      latitude: ['latitude', 'lat', 'lat.', 'y', 'column c', 'c'],
-      longitude: ['longitude', 'long', 'lng', 'lon', 'x', 'column d', 'd'],
-      city: ['city', 'town', 'municipality', 'column e', 'e'],
-      state: ['state', 'st', 'province', 'state code', 'state_code', 'column f', 'f'],
-      location: ['location', 'city state', 'city, state', 'address', 'full address', 'full_address', 'column g', 'g'],
-      highway: ['highway', 'highway name', 'highway_name', 'interstate', 'interstate highway', 'interstate_highway', 'corridor', 'route', 'route name', 'road', 'column g', 'g'],
-exit: ['exit', 'exit no', 'exit number', 'exit_name', 'exit name', 'column h', 'h']
-    };
+  pump: ['pump_name', 'pump name', 'pump', 'name', 'station', 'station name', 'fuel stop', 'fuel_stop', 'truck stop', 'truck_stop', 'location name', 'location_name', 'vendor', 'brand', 'site name', 'store', 'column a', 'a'],
+  price: ['price_per_gallon', 'price per gallon', 'price/gallon', 'price per gal', 'price_per_gal', 'price', 'fuel price', 'diesel price', 'discounted price', 'retail price', 'cpg', 'cost per gallon', 'cost_per_gallon', 'rate', 'column b', 'b'],
+  latitude: ['latitude', 'lat', 'lat.', 'y', 'column c', 'c'],
+  longitude: ['longitude', 'long', 'lng', 'lon', 'x', 'column d', 'd'],
+  city: ['city', 'town', 'municipality', 'column e', 'e'],
+  state: ['state', 'st', 'province', 'state code', 'state_code', 'column f', 'f'],
+  location: ['location', 'city state', 'city, state', 'address', 'full address', 'full_address'],
+  highway: ['highway', 'highway name', 'highway_name', 'interstate', 'interstate highway', 'interstate_highway', 'corridor', 'route', 'route name', 'road', 'column g', 'g'],
+  exit: ['exit', 'exit no', 'exit number', 'exit_name', 'exit name', 'column h', 'h']
+};
 
     const appState = {
       map: null,
@@ -1698,6 +1698,7 @@ exit: ['exit', 'exit no', 'exit number', 'exit_name', 'exit name', 'column h', '
       const highwayRaw = String(getValue(row, 'highway') || '').trim();
 const exitRaw = String(getValue(row, 'exit') || '').trim();
 const highways = highwayTokens(highwayRaw);
+      const exitRaw = String(getValue(row, 'exit') || '').trim();
 
       if ((!city || !state) && locationRaw.includes(',')) {
         const parts = locationRaw.split(',').map((s) => s.trim()).filter(Boolean);
@@ -1721,7 +1722,7 @@ const highways = highwayTokens(highwayRaw);
         longitude,
         city,
         state,
-        highway: highways.join(', '),
+       highway: highways.join(', '),
 exit: exitRaw,
 location: cityState || usefulLocation
       };
@@ -1796,6 +1797,7 @@ location: cityState || usefulLocation
         `<div class="tt-line"><b>Location:</b> ${escapeHtml(displayLocation(stop))}</div>` +
         `<div class="tt-line"><b>Price:</b> $${stop.price_per_gallon.toFixed(4)}</div>` +
 `<div class="tt-line"><b>Highway:</b> ${escapeHtml(stop.highway || 'n/a')} ||| <b>Exit:</b> ${escapeHtml(stop.exit || 'n/a')}</div>` +
+        `<div class="tt-line"><b>Highway:</b> ${escapeHtml(stop.highway || 'n/a')} ||| <b>Exit:</b> ${escapeHtml(stop.exit || 'n/a')}</div>` +
 `<div class="tt-line"><b>Coordinates:</b> ${stop.latitude.toFixed(5)}, ${stop.longitude.toFixed(5)}</div>``
       );
     }
