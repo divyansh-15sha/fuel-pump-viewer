@@ -1698,7 +1698,7 @@
       const highwayRaw = String(getValue(row, 'highway') || '').trim();
 const exitRaw = String(getValue(row, 'exit') || '').trim();
 const highways = highwayTokens(highwayRaw);
-      const exitRaw = String(getValue(row, 'exit') || '').trim();
+    
 
       if ((!city || !state) && locationRaw.includes(',')) {
         const parts = locationRaw.split(',').map((s) => s.trim()).filter(Boolean);
@@ -1796,7 +1796,6 @@ location: cityState || usefulLocation
         `<div class="tt-title">${escapeHtml(stop.pump_name)}</div>` +
         `<div class="tt-line"><b>Location:</b> ${escapeHtml(displayLocation(stop))}</div>` +
         `<div class="tt-line"><b>Price:</b> $${stop.price_per_gallon.toFixed(4)}</div>` +
-`<div class="tt-line"><b>Highway:</b> ${escapeHtml(stop.highway || 'n/a')} ||| <b>Exit:</b> ${escapeHtml(stop.exit || 'n/a')}</div>` +
         `<div class="tt-line"><b>Highway:</b> ${escapeHtml(stop.highway || 'n/a')} ||| <b>Exit:</b> ${escapeHtml(stop.exit || 'n/a')}</div>` +
 `<div class="tt-line"><b>Coordinates:</b> ${stop.latitude.toFixed(5)}, ${stop.longitude.toFixed(5)}</div>``
       );
