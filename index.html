@@ -2128,103 +2128,6 @@ function cyclePriceSort() {
       setStatus('');
     }
 
-    const STATE_SEARCH_ALIASES = {
-  AL: 'alabama ala',
-  AK: 'alaska ala',
-  AZ: 'arizona ari ariz',
-  AR: 'arkansas ark',
-  CA: 'california cal cali',
-  CO: 'colorado col colo',
-  CT: 'connecticut conn',
-  DE: 'delaware del',
-  FL: 'florida flo fla',
-  GA: 'georgia geo',
-  HI: 'hawaii haw',
-  ID: 'idaho ida',
-  IL: 'illinois ill',
-  IN: 'indiana ind',
-  IA: 'iowa',
-  KS: 'kansas kan',
-  KY: 'kentucky ken',
-  LA: 'louisiana lou',
-  ME: 'maine',
-  MD: 'maryland mar',
-  MA: 'massachusetts mas mass',
-  MI: 'michigan mic mich',
-  MN: 'minnesota min minn',
-  MS: 'mississippi mis miss',
-  MO: 'missouri mis miss',
-  MT: 'montana mon mont',
-  NE: 'nebraska neb',
-  NV: 'nevada nev',
-  NH: 'new hampshire hampshire',
-  NJ: 'new jersey jersey',
-  NM: 'new mexico mexico',
-  NY: 'new york york',
-  NC: 'north carolina carolina',
-  ND: 'north dakota dakota',
-  OH: 'ohio',
-  OK: 'oklahoma okla',
-  OR: 'oregon ore',
-  PA: 'pennsylvania penn',
-  RI: 'rhode island rhode',
-  SC: 'south carolina carolina',
-  SD: 'south dakota dakota',
-  TN: 'tennessee ten tenn',
-  TX: 'texas tex',
-  UT: 'utah',
-  VT: 'vermont ver',
-  VA: 'virginia vir',
-  WA: 'washington wash',
-  WV: 'west virginia virginia',
-  WI: 'wisconsin wis',
-  WY: 'wyoming wyo'
-};
-
-function cleanSearchText(value) {
-  return String(value || '')
-    .toLowerCase()
-    .replace(/[.,]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function citySearchAliases(value) {
-  const base = cleanSearchText(value);
-  const variants = new Set([base]);
-
-  variants.add(base.replace(/\bmt\b/g, 'mount'));
-  variants.add(base.replace(/\bmount\b/g, 'mt'));
-
-  variants.add(base.replace(/\bst\b/g, 'saint'));
-  variants.add(base.replace(/\bsaint\b/g, 'st'));
-
-  variants.add(base.replace(/\bn\b/g, 'north'));
-  variants.add(base.replace(/\bnorth\b/g, 'n'));
-
-  variants.add(base.replace(/\bmc\s+/g, 'mac '));
-  variants.add(base.replace(/\bmac\s+/g, 'mc '));
-
-  return [...variants].join(' ');
-}
-
-function buildSmartSearchText(row) {
-  const stateCode = String(row.state || '').trim().toUpperCase();
-
-  return [
-    row.pump_name,
-    row.city,
-    row.state,
-    row.location,
-    row.highway,
-    row.exit,
-    row.price_per_gallon,
-    citySearchAliases(row.city),
-    citySearchAliases(row.location),
-    STATE_SEARCH_ALIASES[stateCode] || ''
-  ].join(' ').toLowerCase();
-}
-    
     function getActiveFilters() {
       return {
         query: String($('searchInput').value || '').trim().toLowerCase(),
@@ -2245,9 +2148,8 @@ function buildSmartSearchText(row) {
         const matchesHighway = !highways.length || highways.some((highway) => rowHighways.includes(highway));
         const matchesState = !state || rowState === state;
         const hay = [row.pump_name, row.city, row.state, row.location, row.highway, row.exit, row.price_per_gallon].join(' ').toLowerCase();
-       const smartQuery = cleanSearchText(query);
-const hay = buildSmartSearchText(row);
-const matchesSearch = !smartQuery || hay.includes(smartQuery);
+        const matchesSearch = !query || hay.includes(query);
+        return matchesHighway && matchesState && matchesSearch;
       });
 
       $('filteredCount').textContent = String(appState.filteredRows.length);
